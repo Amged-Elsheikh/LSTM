@@ -284,5 +284,5 @@ def get_prediction(inputs):
 # %%
 #Execute the evaluation
 Y_test_preds = get_prediction(X_test)
-evaluation(time_test, Y_scaler_testing.inverse_transform(Y_test),Y_test_preds,'test', label=output_label)
+evaluation(time_test, Y_scaler_testing.inverse_transform(Y_test),Y_test_preds,'test_server_', label=output_label)
 
