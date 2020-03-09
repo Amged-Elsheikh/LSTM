@@ -146,8 +146,8 @@ class Model(nn.Module):
 
     def init_hidden(self, batch_size=8):
         # This is what we'll initialise our hidden state as
-        return (torch.zeros(self.num_layers, batch_size, self.hidden_dim),
-                torch.zeros(self.num_layers, batch_size, self.hidden_dim))
+        return (torch.zeros(self.num_layers, batch_size, self.hidden_dim).to(device),
+                torch.zeros(self.num_layers, batch_size, self.hidden_dim).to(device))
 
     def forward(self, x, hidden=None):
         batch_size = x.size(0)
@@ -168,6 +168,7 @@ class Model(nn.Module):
 # %%
 lr=0.001
 model = Model()
+model.to(device)
 loss_fn = torch.nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
@@ -201,7 +202,7 @@ for epoch in range(num_epochs):
     # validation
     for X, Y in test_loader:
         X, Y = X.to(device), Y.to(device)
-        
+
         # forward
         Y = Y.view(-1, 8)
         Y_pred, _ = model(X)
@@ -229,6 +230,7 @@ for epoch in range(num_epochs):
 # %%
 #Load the trained model
 model = Model()
+model.to(device)
 model.load_state_dict(torch.load("best_model1.pth"))
 
 
