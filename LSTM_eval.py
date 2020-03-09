@@ -4,7 +4,6 @@
 from IPython import get_ipython
 
 # %%
-get_ipython().run_line_magic('matplotlib', 'inline')
 import numpy as np
 import pandas as pd
 import scipy as sp
@@ -202,8 +201,10 @@ def evaluation(time, Y, Y_pred, split, label):
         else:
             y_label = 'Nm'
             unit = ' Nm'
+        
         print('vaf' + f'({label[col]}) =', vaf)
         print('RMSE' + f'({label[col]}) = {rmse}' + unit)
+        plt.figure(col)
         plt.plot(time[:frame_size], Y[:frame_size, col], 'r')
         plt.plot(time[:frame_size], Y_pred[:frame_size, col], 'b')
         plt.legend(legends, loc = 'upper right')
@@ -212,7 +213,6 @@ def evaluation(time, Y, Y_pred, split, label):
         #title = label[col] + f' (RMSE = {rmse}' + unit + ')'
         plt.title(label[col])
         plt.savefig('plots/' + split + f'_{label[col]}.pdf')
-        plt.show()
         
 #Get the predicted values from the test dataset
 def get_prediction(inputs):
@@ -222,7 +222,7 @@ def get_prediction(inputs):
         for x in inputs:
             X = torch.tensor(x).view(1,1,-1).to(device)
             y_pred, hidden = online_pred(model, X , hidden)
-            y_pred = Y_scaler_testing.inverse_transform(y_pred).reshape(-1).to(device)
+            y_pred = Y_scaler_testing.inverse_transform(y_pred.cpu()).reshape(-1)
             Y_preds.append(y_pred)
         Y_preds = np.array(Y_preds)
     return (Y_preds)
