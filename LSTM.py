@@ -110,12 +110,20 @@ train_loader = DataLoader(train_data, batch_size=batch_size)
 val_loader = DataLoader(val_data, batch_size=batch_size)
 test_loader = DataLoader(test_data, batch_size=1)
 
+
+# torch.cuda.is_available() checks and returns a Boolean True if a GPU is available, else it'll return False
+is_cuda = torch.cuda.is_available()
+
+# If we have a GPU available, we'll set our device to GPU. We'll use this device variable later in our code.
+if is_cuda:
+    device = torch.device("cuda")
+else:
+    device = torch.device("cpu")
+
 # %% [markdown]
 # ### Model 
 
 # %%
-import torch
-import torch.nn as nn
 
 class Model(nn.Module):
 
@@ -171,6 +179,7 @@ for epoch in range(num_epochs):
     
     # train
     for X, Y in train_loader:
+        X, Y = X.to(device), Y.to(device)
         # zero grad
         model.zero_grad()
         
@@ -191,6 +200,7 @@ for epoch in range(num_epochs):
     val_loss_epoch = 0.0
     # validation
     for X, Y in test_loader:
+        X, Y = X.to(device), Y.to(device)
         
         # forward
         Y = Y.view(-1, 8)
