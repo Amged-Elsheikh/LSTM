@@ -201,7 +201,7 @@ for epoch in range(num_epochs):
     # validation
     for X, Y in test_loader:
         X, Y = X.to(device), Y.to(device)
-        
+
         # forward
         Y = Y.view(-1, 8)
         Y_pred, _ = model(X)
@@ -229,6 +229,7 @@ for epoch in range(num_epochs):
 # %%
 #Load the trained model
 model = Model()
+model.to(device)
 model.load_state_dict(torch.load("best_model1.pth"))
 
 

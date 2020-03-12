@@ -21,14 +21,23 @@ import seaborn as sns
 
 # %%
 # Import data from training & testing dataset
+<<<<<<< HEAD
 training_csv_file = 'dataset_2020_training_left.csv'
 testing_csv_file = 'dataset_2020_testing1_left.csv'
+=======
+training_csv_file = 'dataset_2020_training.csv'
+testing_csv_file = 'dataset_2020_testing1.csv'
+>>>>>>> 29af4f4637f961ae098af88ca1b1c8b8a3b047ca
 training_set = pd.read_csv(training_csv_file, header=0)
 testing_set = pd.read_csv(testing_csv_file, header=0)
 
 #The output is: knee/ankle angle/torque l/r
+<<<<<<< HEAD
 out_num = 4
 input_size = 49
+=======
+out_num = 8
+>>>>>>> 29af4f4637f961ae098af88ca1b1c8b8a3b047ca
 
 #Get the label
 Label_df = pd.read_csv(training_csv_file, header=0, nrows = 1)
@@ -53,6 +62,7 @@ def get_scaler(ndarray):
 
 # %%
 #Get scaler for inputs/outputs
+<<<<<<< HEAD
 X_scaler_training = get_scaler(training_data[:,:input_size])
 Y_scaler_training = get_scaler(training_data[:,-out_num:])
 X_scaler_testing = get_scaler(testing_data[:,:input_size])
@@ -63,6 +73,18 @@ X_train = X_scaler_training.transform(training_data[:,:input_size])
 Y_train = Y_scaler_training.transform(training_data[:,-out_num:])
 X_test = X_scaler_testing.transform(testing_data[:,:input_size])
 Y_test = Y_scaler_testing.transform(testing_data[:,-out_num:])
+=======
+X_scaler_training = get_scaler(training_data[:,:98])
+Y_scaler_training = get_scaler(training_data[:,-8:])
+X_scaler_testing = get_scaler(testing_data[:,:98])
+Y_scaler_testing = get_scaler(testing_data[:,-8:])
+
+
+X_train = X_scaler_training.transform(training_data[:,:98])
+Y_train = Y_scaler_training.transform(training_data[:,-8:])
+X_test = X_scaler_testing.transform(testing_data[:,:98])
+Y_test = Y_scaler_testing.transform(testing_data[:,-8:])
+>>>>>>> 29af4f4637f961ae098af88ca1b1c8b8a3b047ca
 
 #Get scaler for the whole training data
 train_data_scaler = get_scaler(training_data)
@@ -93,8 +115,13 @@ def create_inout_sequences(input_data, size, out_num, time_steps):
 
 
 # %%
+<<<<<<< HEAD
 train_input, train_output = create_inout_sequences(train_data_normalized, input_size, out_num, 50)
 test_input, test_output = create_inout_sequences(test_data_normalized, input_size, out_num, 50)
+=======
+train_input, train_output = create_inout_sequences(train_data_normalized, 98, 8, 50)
+test_input, test_output = create_inout_sequences(test_data_normalized, 98, 8, 50)
+>>>>>>> 29af4f4637f961ae098af88ca1b1c8b8a3b047ca
 
 
 # %%
@@ -127,9 +154,15 @@ else:
 
 class Model(nn.Module):
 
+<<<<<<< HEAD
     def __init__(self, input_dim = input_size, 
                  hidden_dim = 256, 
                  output_dim=out_num,
+=======
+    def __init__(self, input_dim = 98, 
+                 hidden_dim = 256, 
+                 output_dim=8,
+>>>>>>> 29af4f4637f961ae098af88ca1b1c8b8a3b047ca
                  num_layers=3,
                  drop_prob=0.3):
         super().__init__()
@@ -144,7 +177,11 @@ class Model(nn.Module):
         # Define the output layer
         self.linear = nn.Linear(self.hidden_dim, output_dim)
 
+<<<<<<< HEAD
     def init_hidden(self, batch_size):
+=======
+    def init_hidden(self, batch_size=8):
+>>>>>>> 29af4f4637f961ae098af88ca1b1c8b8a3b047ca
         # This is what we'll initialise our hidden state as
         return (torch.zeros(self.num_layers, batch_size, self.hidden_dim).to(device),
                 torch.zeros(self.num_layers, batch_size, self.hidden_dim).to(device))
@@ -166,7 +203,11 @@ class Model(nn.Module):
 #Load the trained model
 model = Model()
 model.to(device)
+<<<<<<< HEAD
 model.load_state_dict(torch.load("best_model_server_left.pth"))
+=======
+model.load_state_dict(torch.load("best_model1.pth"))
+>>>>>>> 29af4f4637f961ae098af88ca1b1c8b8a3b047ca
 
 
 # %%
@@ -193,10 +234,17 @@ def online_pred(model, X, hidden_in):
 #Perform the evaluation and plot graphs
 def evaluation(time, Y, Y_pred, split, label):    
     frame_size = 600
+<<<<<<< HEAD
     for col in range(out_num):
         rmse = np.round(rmse_cal(Y[:frame_size, col],Y_pred[:frame_size, col]),2)
         vaf = np.round(vaf_cal(Y[:frame_size, col],Y_pred[:frame_size, col]),5)
         if col == 0 or col == 1:
+=======
+    for col in range(8):
+        rmse = np.round(rmse_cal(Y[:frame_size, col],Y_pred[:frame_size, col]),2)
+        vaf = np.round(vaf_cal(Y[:frame_size, col],Y_pred[:frame_size, col]),5)
+        if col == 0 or col == 1 or col == 4 or col == 5:
+>>>>>>> 29af4f4637f961ae098af88ca1b1c8b8a3b047ca
             y_label = 'Degree'
             unit = '\xB0'
         else:
@@ -232,5 +280,9 @@ def get_prediction(inputs):
 # %%
 #Execute the evaluation
 Y_test_preds = get_prediction(X_test)
+<<<<<<< HEAD
 evaluation(time_test, Y_scaler_testing.inverse_transform(Y_test),Y_test_preds,'test_server_left_', label=output_label)
+=======
+evaluation(time_test, Y_scaler_testing.inverse_transform(Y_test),Y_test_preds,'test_server_', label=output_label)
+>>>>>>> 29af4f4637f961ae098af88ca1b1c8b8a3b047ca
 
