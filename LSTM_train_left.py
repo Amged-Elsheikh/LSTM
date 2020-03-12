@@ -28,7 +28,7 @@ testing_set = pd.read_csv(testing_csv_file, header=0)
 
 #The output is: knee/ankle angle/torque l/r
 out_num = 4
-
+input_size = 49
 #Get the label
 Label_df = pd.read_csv(training_csv_file, header=0, nrows = 1)
 Label= Label_df.columns.values
@@ -52,16 +52,16 @@ def get_scaler(ndarray):
 
 # %%
 #Get scaler for inputs/outputs
-X_scaler_training = get_scaler(training_data[:,:49)
-Y_scaler_training = get_scaler(training_data[:,-4:])
-X_scaler_testing = get_scaler(testing_data[:,:49])
-Y_scaler_testing = get_scaler(testing_data[:,-4:])
+X_scaler_training = get_scaler(training_data[:,:input_size])
+Y_scaler_training = get_scaler(training_data[:,-out_num:])
+X_scaler_testing = get_scaler(testing_data[:,:input_size])
+Y_scaler_testing = get_scaler(testing_data[:,-out_num:])
 
 
-X_train = X_scaler_training.transform(training_data[:,:49])
-Y_train = Y_scaler_training.transform(training_data[:,-4:])
-X_test = X_scaler_testing.transform(testing_data[:,:49])
-Y_test = Y_scaler_testing.transform(testing_data[:,-4:])
+X_train = X_scaler_training.transform(training_data[:,:input_size])
+Y_train = Y_scaler_training.transform(training_data[:,-out_num:])
+X_test = X_scaler_testing.transform(testing_data[:,:input_size])
+Y_test = Y_scaler_testing.transform(testing_data[:,-out_num:])
 
 #Get scaler for the whole training data
 train_data_scaler = get_scaler(training_data)
@@ -92,8 +92,8 @@ def create_inout_sequences(input_data, size, out_num, time_steps):
 
 
 # %%
-train_input, train_output = create_inout_sequences(train_data_normalized, 49, 4, 50)
-test_input, test_output = create_inout_sequences(test_data_normalized, 49, 4, 50)
+train_input, train_output = create_inout_sequences(train_data_normalized, input_size, out_num, 50)
+test_input, test_output = create_inout_sequences(test_data_normalized, input_size, out_num, 50)
 
 
 # %%
@@ -126,9 +126,9 @@ else:
 
 class Model(nn.Module):
 
-    def __init__(self, input_dim = 49, 
+    def __init__(self, input_dim = input_size, 
                  hidden_dim = 256, 
-                 output_dim=4,
+                 output_dim=out_num,
                  num_layers=3,
                  drop_prob=0.3):
         super().__init__()
@@ -143,7 +143,7 @@ class Model(nn.Module):
         # Define the output layer
         self.linear = nn.Linear(self.hidden_dim, output_dim)
 
-    def init_hidden(self, batch_size=8):
+    def init_hidden(self, batch_size):
         # This is what we'll initialise our hidden state as
         return (torch.zeros(self.num_layers, batch_size, self.hidden_dim).to(device),
                 torch.zeros(self.num_layers, batch_size, self.hidden_dim).to(device))
@@ -184,7 +184,7 @@ for epoch in range(num_epochs):
         model.zero_grad()
         
         # forward
-        Y = Y.view(-1, 4)
+        Y = Y.view(-1, out_num)
         Y_pred, _ = model(X)
         
         # compute loss
@@ -203,7 +203,7 @@ for epoch in range(num_epochs):
         X, Y = X.to(device), Y.to(device)
         
         # forward
-        Y = Y.view(-1, 4)
+        Y = Y.view(-1, out_num)
         Y_pred, _ = model(X)
 
         # compute loss

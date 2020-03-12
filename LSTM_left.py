@@ -143,7 +143,7 @@ class Model(nn.Module):
         # Define the output layer
         self.linear = nn.Linear(self.hidden_dim, output_dim)
 
-    def init_hidden(self, batch_size=8):
+    def init_hidden(self, batch_size):
         # This is what we'll initialise our hidden state as
         return (torch.zeros(self.num_layers, batch_size, self.hidden_dim).to(device),
                 torch.zeros(self.num_layers, batch_size, self.hidden_dim).to(device))
