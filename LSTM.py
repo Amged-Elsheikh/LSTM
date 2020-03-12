@@ -4,7 +4,6 @@
 from IPython import get_ipython
 
 # %%
-get_ipython().run_line_magic('matplotlib', 'inline')
 import numpy as np
 import pandas as pd
 import scipy as sp
@@ -146,8 +145,8 @@ class Model(nn.Module):
 
     def init_hidden(self, batch_size=8):
         # This is what we'll initialise our hidden state as
-        return (torch.zeros(self.num_layers, batch_size, self.hidden_dim),
-                torch.zeros(self.num_layers, batch_size, self.hidden_dim))
+        return (torch.zeros(self.num_layers, batch_size, self.hidden_dim).to(device),
+                torch.zeros(self.num_layers, batch_size, self.hidden_dim).to(device))
 
     def forward(self, x, hidden=None):
         batch_size = x.size(0)
@@ -168,10 +167,11 @@ class Model(nn.Module):
 # %%
 lr=0.001
 model = Model()
+model.to(device)
 loss_fn = torch.nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-num_epochs = 50
+num_epochs = 100
 
 best_val_loss = 1000
 for epoch in range(num_epochs):
@@ -220,7 +220,7 @@ for epoch in range(num_epochs):
     # save model
     if val_loss_epoch < best_val_loss:
         print("Save best model at epoch %2d" % epoch)
-        torch.save(model.state_dict(), "best_model_server.pth")
+        torch.save(model.state_dict(), "best_model_server1.pth")
         best_val_loss = val_loss_epoch
 
 # %% [markdown]
