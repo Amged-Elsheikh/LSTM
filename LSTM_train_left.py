@@ -21,8 +21,8 @@ import seaborn as sns
 
 # %%
 # Import data from training & testing dataset
-training_csv_file = 'dataset_2020_training_left.csv'
-testing_csv_file = 'dataset_2020_testing1_left.csv'
+training_csv_file = 'subject01_left_training.csv'
+testing_csv_file = 'subject01_left_testing.csv'
 training_set = pd.read_csv(training_csv_file, header=0)
 testing_set = pd.read_csv(testing_csv_file, header=0)
 
@@ -220,5 +220,5 @@ for epoch in range(num_epochs):
     # save model
     if val_loss_epoch < best_val_loss:
         print("Save best model at epoch %2d" % epoch)
-        torch.save(model.state_dict(), "best_model_server_left.pth")
+        torch.save(model.state_dict(), "subject01_best_model_server_left.pth")
         best_val_loss = val_loss_epoch
